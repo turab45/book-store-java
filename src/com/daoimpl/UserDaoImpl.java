@@ -143,7 +143,7 @@ public class UserDaoImpl implements UserDao {
 
 			Transaction transaction = session.beginTransaction();
 
-			Query query = session.createQuery("From User u where u.userName=:n and i.password=:p");
+			Query query = session.createQuery("From User u where u.userName=:n and u.password=:p");
 			query.setParameter("n", email);
 			query.setParameter("p", password);
 			

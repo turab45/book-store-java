@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -20,7 +21,7 @@ public class Book {
 	@Column(name = "book_title")
 	private String title;
 	
-	@OneToMany
+	@ManyToOne
 	@JoinColumn(name = "author_id")
 	private Author author;
 

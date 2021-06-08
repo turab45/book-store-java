@@ -1,5 +1,7 @@
 package com.models;
 
+
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,6 +22,7 @@ public class Author {
 	
 	@Column(name = "no_of_publications")
 	private Integer noOfPublications;
+	
 
 	public Integer getId() {
 		return id;
