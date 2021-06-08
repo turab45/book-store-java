@@ -6,7 +6,7 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-public class Database {
+public class DBConnection {
 private static SessionFactory factory = null;
     
     public static SessionFactory getConnection(){
