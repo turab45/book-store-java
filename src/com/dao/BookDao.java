@@ -9,7 +9,7 @@ public interface BookDao {
 	public Integer addBook(Book author);
 	public Integer updateBook(Book author);
 	public Integer deleteBook(Book author);
-	public Book getBookById();
+	public Book getBookById(Integer id);
 	public List<Book> getAllBook();
 
 }

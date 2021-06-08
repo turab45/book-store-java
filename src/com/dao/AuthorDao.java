@@ -8,7 +8,7 @@ public interface AuthorDao {
 public Integer addAuthor(Author author);
 public Integer updateAuthor(Author author);
 public Integer deleteAuthor(Author author);
-public Author getAuthorById();
+public Author getAuthorById(Integer id);
 public List<Author> getAllAuthor();
 
 
