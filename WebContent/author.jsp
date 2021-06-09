@@ -60,9 +60,10 @@ body {
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>
+					<form method="post" id="author_form">
 					<div class="modal-body">
 
-						<form>
+						
 							<div class="form-group">
 								<label for="recipient-name" class="col-form-label">Author
 									Name</label> <input type="text" class="form-control"
@@ -75,14 +76,15 @@ body {
 									type="number" class="form-control" id="publications">
 							</div>
 
-						</form>
+						
 
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary"
 							data-dismiss="modal">Close</button>
-						<button type="button" id="addBtn" class="btn btn-primary">Save</button>
+						<button type="submit" id="addBtn" class="btn btn-primary">Save</button>
 					</div>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -90,7 +92,7 @@ body {
 		<table id="authorTable">
 			<thead>
 				<tr>
-
+					<th>ID</th>
 					<th>Name</th>
 					<th>No of Publications</th>
 					<th>Edit</th>
@@ -109,25 +111,58 @@ body {
 	<script>
 		$(document).ready(function() {
 
-			$('#authorTable').DataTable();
+			var dataTable = $('#authorTable').DataTable({
+				"searching":true,
+				"ordering":false,
+				"processing": true,
+			    "serverSide": true,
+			    "ajax":{
+						url:"./AuthorServlet?action=getAll",
+						type: "GET"
+				    },
+				    "columns": [
+			            { "data": "id"},
+			            { "data": "name" },
+			            { "data":"noOfPublications" },
+			        ],
+			        "columnDefs": [{
+				            "targets": 3,
+				            "data": "id", // Use the full data source object for the renderer's source
+				            "render": function(data, type, row, meta){
+									return '<button name="update" id="'+data+'" class="btn btn-warning btn-xs update">Edit</button>'
+					            }
+				          },
+				          {
+					            "targets": 4,
+					            "data": "id", // Use the full data source object for the renderer's source
+					            "render": function(data, type, row, meta){
+										return '<button name="delete" id="'+data+'" class="btn btn-danger btn-xs delete">Delete</button>'
+						            }
+					          },
+			           ],
+			           
+			    });
 
-			$("#addBtn").on('click', function() {
+			$("#author_form").on('submit', function() {
 
+				event.preventDefault();
+				
 				var authorName = $('#author-name').val();
 				var publications = $('#publications').val();
 
 				console.log(authorName);
 				console.log(publications)
-				
-				var data = {
-					"name":authorName,
-					"publication":publications
-					}
 
 				$.ajax({
 				    type: 'POST',
 				    url:'AuthorServlet?action=create&&name='+authorName+'&&publication='+publications,
-				    contentType: "application/json"
+				    success: function(data){
+				    	 $('#author_form')[0].reset();
+							$('#exampleModal').modal('hide');
+							$("#authorTable").DataTable().ajax.reload();
+							
+							
+					    }
 				});
 
 			});
