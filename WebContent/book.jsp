@@ -122,97 +122,107 @@ table.table td .add {
 }
 </style>
 <script>
-	$(document)
-			.ready(
+	$(document).ready(
 					function() {
 
-						$
-								.ajax({
+						$('#updateBtn').hide();
 
-									url : './AuthorServlet?action=getAll',
+						$.ajax({
+
+									url : './BookServlet?action=getAll',
 									type : 'GET',
 									success : function(data) {
 										for (var i = 0; i < data.length; i++) {
-											$('#authorTable').append('<tr id='+data[i].id+'><td data-target=name>'+ data[i].name+'</td><td data-target=publications>'+data[i].noOfPublications+ '</td><td> <a class="edit" data-id='+data[i].id+' title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="delete" data-id='+data[i].id+' title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>');
+											$('#bookTable').append('<tr id='+data[i].id+'><td data-target=name>'+ data[i].title+'</td><td data-target=publications>'+data[i].author.name+ '</td><td> <a class="edit" data-id='+data[i].id+' title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="delete" data-id='+data[i].id+' title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>');
 										}
 
 									}
 
 								});
 
-						$('[data-toggle="tooltip"]').tooltip();
-						var actions = $("table td:last-child").html();
-						// Append table with add row form on add new button click
-						//     $(".add-new").click(function(){
-						// 		$(this).attr("disabled", "disabled");
-						// 		var index = $("table tbody tr:last-child").index();
-						//         var row = '<tr>' +
-						//             '<td><input type="text" class="form-control" name="name" id="name"></td>' +
-						//             '<td><input type="text" class="form-control" name="department" id="department"></td>' +
-						//             '<td><input type="text" class="form-control" name="phone" id="phone"></td>' +
-						// 			'<td>' + actions + '</td>' +
-						//         '</tr>';
-						//     	$("table").append(row);		
-						// 		$("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
-						//         $('[data-toggle="tooltip"]').tooltip();
-						//     });
-						// Add row on add button click
-						$(document).on(
-								"click",
-								".add",
-								function() {
-									var currentRow = $(this).closest("tr");
+						$.ajax({
 
-									id = currentRow.find("td:eq(0)").text(); // get current row 1st TD value
-									var name = currentRow.find("td:eq(0)")
-											.text(); // get current row 2nd TD
-									var publications = currentRow.find(
-											"td:eq(1)").text(); // get current row 3rd TD
+							url : './AuthorServlet?action=getAll',
+							type : 'GET',
+							success : function(data) {
+								for (var i = 0; i < data.length; i++) {
+									$('#country').append('<option value="'+data[i].name+'" selected="">'+data[i].name+'</option>');
+								}
 
-									$('#author-name').val(name);
-									$('#publications').val(publications);
+							}
 
-									$('#exampleModal').modal('show');
+						});
+
+
+						$('#closeBtn').on('click', function(){
+								$('#author_form')[0].reset();
+								
+							});
+
+						$('#addBtn').on('click', function(){
+							name = $('#book_title').val();
+							var author = $('#country option:selected').val();
+							$.ajax({
+								url:'./BookServlet?action=create&&name='+name+'&&author='+author,
+								type: "POST",
+								success:function(data){
+									
+									$('#bookTable').append('<tr id='+data.id+'><td data-target=name>'+ data.title+'</td><td data-target=publications>'+data.author.name+ '</td><td> <a class="edit" data-id='+data.id+' title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="delete" data-id='+data.id+' title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>');
+
+											$('#exampleModal').modal('hide');
+											
+											
+											
+									},
+
 								});
+						});
+						
 						// Edit row on edit button click
 						$(document).on(
 								"click",
 								".edit",
 								function() {
+
+									$('#addBtn').hide();
+									$('#updateBtn').show();
+									
 									var currentRow = $(this).closest("tr");
 
-									var id = $(this).data('id'); // get current row 1st TD value
+									var rId = $(this).data('id'); // get current row 1st TD value
 									var name = currentRow.find("td:eq(0)")
 											.text(); // get current row 2nd TD
-									var publications = currentRow.find(
-											"td:eq(1)").text(); // get current row 3rd TD
-									console.log(id);
+									var author = currentRow.find("td:eq(1)").text(); // get current row 3rd TD
+									console.log(rId);
 									console.log(name);
-									console.log(publications);
-
-									$('#author-name').val(name);
-									$('#publications').val(publications);
+									console.log(author);
 									
-									$('#addBtn').attr('id','updateBtn');
-									$('#updateBtn').html('Update');
+									
+									
+									$('#book_title').val(name);
+									$('#country').val(author);
+									
+									
 									$('#exampleModal').modal('show');
 
 									$('#updateBtn').on('click', function(){
-										name = $('#author-name').val();
-										publications = $('#publications').val();
+										name = $('#book_title').val();
+										var author = $('#country option:selected').val();
 										$.ajax({
-											url:'./AuthorServlet?action=update&&id='+id+'&&name='+name+'&&publications='+publications,
+											url:'./BookServlet?action=update&&id='+rId+'&&name='+name+'&&author='+author,
 											type: "POST",
 											success:function(data){
 												
-														$('#'+id).children('td[data-target=name]').text(data.name);
-														$('#'+id).children('td[data-target=publications]').text(data.noOfPublications);
+														$('#'+rId).children('td[data-target=name]').text(data.name);
+														$('#'+rId).children('td[data-target=publications]').text(data.author.name);
 
-
-														$('#exampleModal').modal('hide');
+													
+														$('#author_form')[0].reset();
 														
-														$('#updateBtn').attr('id','addBtn');
-														$('#addBtn').html('Save');
+														$('#exampleModal').modal('hide');
+
+														
+														
 														
 												},
 
@@ -220,10 +230,10 @@ table.table td .add {
 									});
 
 									
+
+									
 								});
 					
-
-
 
 			
 
@@ -236,7 +246,7 @@ table.table td .add {
 							if (confirm('Are you sure you want to delete this record?')) {
 								$.ajax({
 
-									url: './AuthorServlet?action=delete&&id='+id,
+									url: './BookServlet?action=delete&&id='+id,
 									type: 'Post',
 									success:function(data, status){
 										if(status == 'success'){
@@ -263,7 +273,7 @@ table.table td .add {
 					<div class="row">
 						<div class="col-sm-8">
 							<h2>
-								Author <b>Details</b>
+								Book <b>Details</b>
 							</h2>
 						</div>
 						<div class="col-sm-4">
@@ -276,27 +286,16 @@ table.table td .add {
 						</div>
 					</div>
 				</div>
-				<table id="authorTable" class="table table-bordered">
+				<table id="bookTable" class="table table-bordered">
 					<thead>
 						<tr>
-							<th>Name</th>
-							<th>Department</th>
+							<th>Title</th>
+							<th>Author</th>
 
 							<th>Actions</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td>John Doe</td>
-							<td>Administration</td>
-
-							<td><a class="add" title="Add" data-toggle="tooltip"><i
-									class="material-icons">&#xE03B;</i></a> <a class="edit"
-								title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
-								<a class="delete" title="Delete" data-toggle="tooltip"><i
-									class="material-icons">&#xE872;</i></a></td>
-						</tr>
-
 
 					</tbody>
 				</table>
@@ -311,7 +310,7 @@ table.table td .add {
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">Add New Author</h5>
+				<h5 class="modal-title" id="exampleModalLabel">Add New Book</h5>
 				<button type="button" class="close" data-dismiss="modal"
 					aria-label="Close">
 					<span aria-hidden="true">&times;</span>
@@ -322,14 +321,15 @@ table.table td .add {
 
 
 					<div class="form-group">
-						<label for="recipient-name" class="col-form-label">Author
-							Name</label> <input type="text" class="form-control" id="author-name">
+						<label for="recipient-name" class="col-form-label">Book Title</label> <input type="text" class="form-control" id="book_title">
 					</div>
 					<div class="form-group">
-						<label for="recipient-name" class="col-form-label"
-							data-toggle="tooltip" data-placement="top"
-							title="No of publications">Publications</label> <input
-							type="number" class="form-control" id="publications">
+						<label for="recipient-name" class="col-form-label" data-toggle="tooltip" data-placement="top" title="No of publications">Author</label> 
+						 <div>
+						 <select id="country" name="country" class="form-control">
+						 
+						 </select>
+						 </div>
 					</div>
 
 
@@ -337,8 +337,10 @@ table.table td .add {
 				</div>
 			</form>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button type="button" id ="closeBtn" class="btn btn-secondary" data-dismiss="modal">Close</button>
 				<button type="button" id="addBtn" class="btn btn-primary">Save</button>
+				<button type="button" id="updateBtn" class="btn btn-primary">Update</button>
+				
 			</div>
 
 		</div>

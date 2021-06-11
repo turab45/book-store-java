@@ -29,9 +29,7 @@
 				
 			</div>
 			<div class="form-group">
-				<button id="loginbtn" class="btn btn-success btn-lg btn-block">
-					<a style="text-decoration: none;">Book</a>
-				</button>
+				<a class="btn btn-success btn-lg btn-block" style="text-decoration: none;" href="book.jsp">Book</a>
 			</div>
 			<div class="form-group">
 				<button id="loginbtn" class="btn btn-success btn-lg btn-block">

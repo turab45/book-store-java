@@ -3,6 +3,7 @@ package com.daoimpl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -23,11 +24,11 @@ public class BookDaoImpl implements BookDao{
 
 			Transaction transaction = session.beginTransaction();
 
-			session.remove(book);
+			session.save(book);
 			result = 1;
 
 			transaction.commit();
-			System.out.println("Successfully deleted.");
+			System.out.println("Successfully added.");
 			// factory.close();
 			session.close();
 
@@ -51,7 +52,7 @@ public class BookDaoImpl implements BookDao{
 			result = 1;
 
 			transaction.commit();
-			System.out.println("Successfully deleted.");
+			System.out.println("Successfully updated.");
 			// factory.close();
 			session.close();
 
@@ -130,6 +131,32 @@ public class BookDaoImpl implements BookDao{
 			System.out.println("Error : " + e.getMessage());
 		}
 		return books;
+	}
+
+	@Override
+	public Book getBookByName(String name) {
+		Book book = null;
+		try {
+			SessionFactory factory = DBConnection.getConnection();
+			Session session = factory.openSession();
+
+			Transaction transaction = session.beginTransaction();
+
+			Query query = session.createQuery("From Book b where b.title=:n");
+			query.setParameter("n", name);
+			
+			book = (Book) query.getSingleResult();
+			
+			transaction.commit();
+			System.out.println("Successfully fetched.");
+			// factory.close();
+			session.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error : " + e.getMessage());
+		}
+		return book;
 	}
 
 }

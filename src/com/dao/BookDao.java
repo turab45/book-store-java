@@ -11,5 +11,6 @@ public interface BookDao {
 	public Integer deleteBook(Book author);
 	public Book getBookById(Integer id);
 	public List<Book> getAllBook();
+	public Book getBookByName(String book);
 
 }

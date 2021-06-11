@@ -50,7 +50,7 @@ public class AuthorServlet extends HttpServlet {
 		switch (action) {
 		case "create":
 			String authorName = request.getParameter("name").toString();
-			Integer publications = Integer.parseInt(request.getParameter("publication"));
+			Integer publications = Integer.parseInt(request.getParameter("publications"));
 
 			System.out.println("Name : " + authorName + ", publications : " + publications);
 
@@ -60,13 +60,11 @@ public class AuthorServlet extends HttpServlet {
 
 			result = authorDaoImpl.addAuthor(author);
 
-			if (result > 0) {
-				listData = gson.toJson("Data Inserted");
-			}
+			Author a = authorDaoImpl.getAuthorByName(author.getName());
 
 			response.setContentType("application/json");
 
-			response.getWriter().print(listData);
+			response.getWriter().print(gson.toJson(a));
 
 			break;
 
@@ -85,7 +83,7 @@ public class AuthorServlet extends HttpServlet {
 			String name = request.getParameter("name");
 			publications = Integer.parseInt(request.getParameter("publications"));
 
-			System.out.println("Publications : " + publications);
+			System.out.println("ID : " + id);
 			author = authorDaoImpl.getAuthorById(id);
 
 			if (author != null) {

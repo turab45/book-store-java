@@ -10,6 +10,7 @@ public Integer updateAuthor(Author author);
 public Integer deleteAuthor(Author author);
 public Author getAuthorById(Integer id);
 public List<Author> getAllAuthor();
+public Author getAuthorByName(String name);
 
 
 }
